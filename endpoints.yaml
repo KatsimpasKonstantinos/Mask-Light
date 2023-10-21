@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: Mask Light 1.0
+  description: |-
+    API Endpoints for ESP
+  contact:
+    email: konstantinos@katsimpas.com
+  license:
+    name: MIT
+    url: TODO
+  version: TODO
+externalDocs:
+  description: GitHub
+  url: https://github.com/KatsimpasKonstantinos/Mask-Light
+servers:
+  - url: http://192.168.115.165:80
+tags:
+  - name: kff
+    description: KFF - individual Pixel data (Frame, Y, X)
+
+paths:
+
+  /kff:
+    get:
+      tags:
+        - kff
+      summary: Get current KFF 
+      operationId: getCurrentKFF
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KFF"
+          
+    post:
+      tags:
+        - kff
+      summary: Insert new kff into esp
+      operationId: addKFF
+      requestBody:
+        description: Insert new kff into esp
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KFF"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/KFF"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/KFF"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+        "405":
+          description: Invalid input
+    delete:
+      tags:
+        - kff
+      summary: Delete kff from esp
+      operationId: deleteCustomer
+      responses:
+        "200":
+          description: Successful operation
+
+        
+  
+components:
+  schemas:
+
+    KFF:
+      type: object
+      properties:
+        frames:
+          type: number
+        matrixY:
+          type: number
+        matrixY::
+          type: number
+        speed:
+          type: number
+        data:
+          type: object
+      xml:
+        name: kff
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
