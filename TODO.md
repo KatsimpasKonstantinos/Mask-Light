@@ -1,6 +1,6 @@
-## Mask-Light Roadmap
+## Mask-Light TODO
 
-### 6.0
-- [X] Establish Connection
-- [ ] Implement new endpoints
-- [ ] Develop new format, only send data of pixels that changed
+### 1.0
+- [ ] Web App
+- [ ] Mobile App
+- [ ] ESP
