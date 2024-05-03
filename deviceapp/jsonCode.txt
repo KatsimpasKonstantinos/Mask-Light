@@ -1,0 +1,241 @@
+#include <Arduino.h>
+#include <ArduinoJson.h>
+
+#include <Adafruit_NeoPixel.h>
+#ifdef AVR
+#include <avr/power.h>
+#endif
+
+//---------------------------------------------------------------------------------Constants
+
+#define PIN 12
+const int matrixX = 16;
+const int matrixY = 8;
+const int amountLED = matrixX * matrixY;
+const int jsonSize = 20000;
+
+String json = "{\"frames\":2,\"matrixX\":16,\"matrixY\":8,\"speed\":10,\"data\":{\"0\":{\"0\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[0,0,0],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[0,0,0],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[0,0,0],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"1\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"2\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"3\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[255,0,125],\"5\":[255,0,125],\"6\":[255,0,125],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"4\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"5\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"6\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"7\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[0,0,0],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[0,0,0],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[0,0,0],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]}},\"1\":{\"0\":{\"0\":[0,125,255],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[0,0,0],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[0,0,0],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[0,0,0],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,125,255]},\"1\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"2\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[255,0,125],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"3\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[255,0,125],\"5\":[255,0,255],\"6\":[255,0,125],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"4\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[255,0,125],\"5\":[0,0,0],\"6\":[255,0,125],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"5\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"6\":{\"0\":[0,0,0],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[255,0,125],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[255,0,125],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[255,0,125],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,0,0]},\"7\":{\"0\":[0,125,255],\"1\":[0,0,0],\"2\":[0,0,0],\"3\":[0,0,0],\"4\":[0,0,0],\"5\":[0,0,0],\"6\":[0,0,0],\"7\":[0,0,0],\"8\":[0,0,0],\"9\":[0,0,0],\"10\":[0,0,0],\"11\":[0,0,0],\"12\":[0,0,0],\"13\":[0,0,0],\"14\":[0,0,0],\"15\":[0,125,255]}}}}";
+StaticJsonDocument<jsonSize> doc;
+
+//---------------------------------------------------------------------------------Function Declaration
+
+void setPixelColor1D(int, uint32_t);
+void setPixelColor2D(int, int, uint32_t);
+int assConverter(int);
+uint32_t colorWheel(byte, double);
+void clearStrip();
+// void assKFFlighter(int);
+
+void mode();
+String getValue(String, int);
+
+void simulationRainbow(double, double, double);
+void simulationBoing(double, double);
+void simulationRainbowOscillation(double, double, double);
+void simulationRainbowSidewaysStripe(int, double, double);
+void parseData(String data);
+void paintKFF(int);
+
+//---------------------------------------------------------------------------------Setup
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(amountLED, PIN, NEO_GRB + NEO_KHZ800);
+
+void setup()
+{
+  strip.begin();
+  strip.setBrightness(50);
+  strip.show(); // Initialize all pixels to 'off'
+  Serial.begin(115200);
+
+  parseData(json);
+  // Print the extracted values
+  Serial.print("MatrixY: ");
+  Serial.println(doc["matrixY"].as<String>());
+  Serial.print("MatrixX: ");
+  Serial.println(doc["matrixX"].as<String>());
+  Serial.print("Frames: ");
+  Serial.println(doc["frames"].as<String>());
+  Serial.print("Speed: ");
+  Serial.println(doc["speed"].as<String>());
+}
+
+//---------------------------------------------------------------------------------Test
+
+//---------------------------------------------------------------------------------Loop
+
+int frameCounter = 1;
+
+void loop()
+{
+  clearStrip();
+  mode();
+  //paintKFF(frameCounter);
+  strip.show();
+  frameCounter++;
+  delay(10);
+}
+
+//---------------------------------------------------------------------------------Functions
+
+void mode()
+{
+  int mode = (frameCounter / 1000) % 4;
+  if (mode == 0)
+  {
+    simulationRainbow(1, 1, 0.5);
+  }
+  else if (mode == 1)
+  {
+    simulationRainbowOscillation(17, 1, 1);
+  }
+  else if (mode == 2)
+  {
+    simulationRainbow(2, 0.5, 1);
+    simulationBoing(1, 1);
+  }
+  else if (mode == 3)
+  {
+    simulationRainbowSidewaysStripe(1, 1, 1);
+  }
+}
+
+void paintKFF(int frameCounter)
+{
+  for (int y = 0; y < matrixY; y++)
+  {
+    for (int x = 0; x < matrixX; x++)
+    {
+      String frame = String(frameCounter % doc["frames"].as<int>());
+
+      JsonArray colorArray = doc["data"][String(frameCounter % doc["frames"].as<int>())][String(y)][String(x)];
+
+      uint8_t r = colorArray[0];
+      uint8_t g = colorArray[1];
+      uint8_t b = colorArray[2];
+
+      setPixelColor2D(x, y, strip.Color(r, g, b));
+    }
+  }
+}
+
+void setPixelColor1D(int position, uint32_t color)
+{
+  strip.setPixelColor(assConverter(position), color);
+}
+
+void setPixelColor2D(int x, int y, uint32_t color)
+{
+  setPixelColor1D((x + y * matrixX), color);
+}
+
+int assConverter(int wrongPos)
+{
+  int rightPos = 0;
+
+  if (wrongPos < 8)
+    rightPos = 63 - wrongPos;
+  else if (wrongPos < 16)
+    rightPos = 79 - wrongPos;
+  else if (wrongPos < 24)
+    rightPos = 32 + wrongPos;
+  else if (wrongPos < 32)
+    rightPos = 48 + wrongPos;
+
+  else if (wrongPos < 40)
+    rightPos = 79 - wrongPos;
+  else if (wrongPos < 48)
+    rightPos = 127 - wrongPos;
+  else if (wrongPos < 56)
+    rightPos = (-16) + wrongPos;
+  else if (wrongPos < 64)
+    rightPos = 32 + wrongPos;
+
+  else if (wrongPos < 72)
+    rightPos = 95 - wrongPos;
+  else if (wrongPos < 80)
+    rightPos = 175 - wrongPos;
+  else if (wrongPos < 88)
+    rightPos = (-64) + wrongPos;
+  else if (wrongPos < 96)
+    rightPos = 16 + wrongPos;
+
+  else if (wrongPos < 104)
+    rightPos = 111 - wrongPos;
+  else if (wrongPos < 112)
+    rightPos = 223 - wrongPos;
+  else if (wrongPos < 120)
+    rightPos = (-112) + wrongPos;
+  else if (wrongPos < 128)
+    rightPos = 0 + wrongPos;
+
+  return rightPos;
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t colorWheel(byte WheelPos, double brightness)
+{
+  WheelPos = 255 - WheelPos;
+  if (WheelPos < 85)
+  {
+    return strip.Color((255 - WheelPos * 3) * brightness, 0, WheelPos * 3 * brightness);
+  }
+  if (WheelPos < 170)
+  {
+    WheelPos -= 85;
+    return strip.Color(0, WheelPos * 3 * brightness, (255 - WheelPos * 3) * brightness);
+  }
+  WheelPos -= 170;
+  return strip.Color(WheelPos * 3 * brightness, (255 - WheelPos * 3) * brightness, 0);
+}
+
+void clearStrip()
+{
+  strip.fill(strip.Color(0, 0, 0), 0, matrixX * matrixY);
+}
+
+void simulationRainbow(double stretch, double brightness, double speed)
+{
+  for (int i = 0; i < matrixX * matrixY; i++)
+  {
+    setPixelColor1D(i, colorWheel(((double)i) * stretch + ((double)frameCounter) * speed, brightness));
+  }
+}
+
+void simulationRainbowOscillation(double stretch, double brightness, double speed)
+{
+  simulationRainbow(sin((((double)frameCounter) * speed) / 100) * stretch, brightness, 1);
+}
+
+void simulationRainbowSidewaysStripe(int stretch, double brightness, double speed)
+{
+  simulationRainbow((255 / matrixX) * stretch, brightness, speed);
+}
+
+double simulationBoingX = 0;
+double simulationBoingY = 0;
+double simulationBoingXV = 0.1;
+double simulationBoingYV = 0.15;
+void simulationBoing(double brightness, double speed)
+{
+  if (simulationBoingX >= matrixX - abs(simulationBoingXV * speed) || simulationBoingX < 0)
+    simulationBoingXV = -simulationBoingXV;
+  if (simulationBoingY >= matrixY - abs(simulationBoingYV * speed) || simulationBoingY < 0)
+    simulationBoingYV = -simulationBoingYV;
+  simulationBoingX += simulationBoingXV * speed;
+  simulationBoingY += simulationBoingYV * speed;
+  int colorCache = 255 * brightness;
+  setPixelColor2D((int)simulationBoingX, (int)simulationBoingY, strip.Color(colorCache, colorCache, colorCache));
+}
+
+void parseData(String data)
+{
+  DeserializationError error = deserializeJson(doc, data);
+
+  if (error)
+  {
+    Serial.print("JSON parsing failed: ");
+    Serial.println(error.c_str());
+    return;
+  }
+}
