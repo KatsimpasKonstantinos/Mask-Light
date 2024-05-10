@@ -1,8 +1,8 @@
 #include "LedController.h"
 #include <Arduino.h>
 
-LedController::LedController(uint8_t pin, uint8_t numLedsX, uint8_t numLedsY)
-    : strip(numLedsX * numLedsY, pin, NEO_GRB + NEO_KHZ800), width(numLedsX), height(numLedsY)
+LedController::LedController(uint8_t pin, uint8_t numLedsX, uint8_t numLedsY, uint8_t defaultBrightness)
+    : strip(numLedsX * numLedsY, pin, NEO_GRB + NEO_KHZ800), width(numLedsX), height(numLedsY), _defaultBrightness(defaultBrightness)
 {
 }
 
@@ -16,10 +16,10 @@ void LedController::setup()
 void LedController::noConnection()
 {
     clear();
-    setColor(255, 255, 255, 0, 0);
-    setColor(255, 255, 255, width - 1, 0);
-    setColor(255, 255, 255, 0, height - 1);
-    setColor(255, 255, 255, width - 1, height - 1);
+    setColor(_defaultBrightness, _defaultBrightness, _defaultBrightness, 0, 0);
+    setColor(_defaultBrightness, _defaultBrightness, _defaultBrightness, width - 1, 0);
+    setColor(_defaultBrightness, _defaultBrightness, _defaultBrightness, 0, height - 1);
+    setColor(_defaultBrightness, _defaultBrightness, _defaultBrightness, width - 1, height - 1);
     strip.show();
 }
 
@@ -37,13 +37,13 @@ void LedController::yesHotSpotNoWSConnection(String ip)
             {
                 if (y == 0)
                 {
-                    setColor(0, 0, 255, x, 0);
+                    setColor(0, 0, _defaultBrightness, x, 0);
                 }
                 else
                 {
                     for (uint8_t j = 0; j < y; j++)
                     {
-                        setColor(255, 0, 0, x, j);
+                        setColor(_defaultBrightness, 0, 0, x, j);
                     }
                 }
             }
@@ -51,13 +51,13 @@ void LedController::yesHotSpotNoWSConnection(String ip)
             {
                 if (y == 0)
                 {
-                    setColor(0, 255, 0, x, 0);
+                    setColor(0, _defaultBrightness, 0, x, 0);
                 }
                 else
                 {
                     for (uint8_t j = 0; j < y; j++)
                     {
-                        setColor(255, 255, 255, x, j);
+                        setColor(_defaultBrightness, _defaultBrightness, _defaultBrightness, x, j);
                     }
                 }
             }
@@ -72,8 +72,8 @@ void LedController::allConnection()
     // draw a green border
     for (uint8_t x = 0; x < width; x++)
     {
-        setColor(0, 255, 0, x, 0);
-        setColor(0, 255, 0, x, height - 1);
+        setColor(0, _defaultBrightness, 0, x, 0);
+        setColor(0, _defaultBrightness, 0, x, height - 1);
     }
     strip.show();
 }

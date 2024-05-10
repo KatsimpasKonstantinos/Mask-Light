@@ -8,6 +8,8 @@
   - [ ] Text & Background Color (2dots)
   - [ ] Add smoothness adjuster (send double frames) of find alternative for smoothing
   - [ ] Speed adjustment not in 2KFF
+  - [ ] Live should have Speed and Brightness sliders
+  - [ ] Gray out Send when not connected
 - [ ] ESP
   - [ ] Websocket Logic
 - [ ] Data Discrepencie, App doesnt fill rest of screen with 0, Web App does

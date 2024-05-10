@@ -13,6 +13,7 @@ const uint16_t amountLED = matrixX * matrixY;
 const char *ssid = "Pixel5";
 const char *password = "123456789";
 const bool debugMode = false;
+const uint8_t defaultBrightness = 20;
 const uint16_t port = 81;
 
 void drawFrame();
@@ -20,7 +21,7 @@ void drawFrame();
 //---------------------------------------------------------------------------------Setup
 
 DataStorage dataStorage;
-LedController ledController(LED_PIN, matrixX, matrixY);
+LedController ledController(LED_PIN, matrixX, matrixY, defaultBrightness);
 WebSocketServerHandler webSocketServerHandler(port, dataStorage, ssid, password, ledController);
 
 void setup()

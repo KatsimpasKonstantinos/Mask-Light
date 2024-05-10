@@ -5,7 +5,7 @@
 
 class LedController {
 public:
-    LedController(uint8_t pin, uint8_t numLedsX, uint8_t numLedsY);
+    LedController(uint8_t pin, uint8_t numLedsX, uint8_t numLedsY, uint8_t defaultBrightness);
     void setup();
     void setColor(uint8_t r, uint8_t g, uint8_t b);
     void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t ledX, uint8_t ledY);
@@ -22,6 +22,7 @@ public:
 private:
     Adafruit_NeoPixel strip;
     uint8_t width, height; // Dimensions of the matrix
+    uint8_t _defaultBrightness;
 };
 
 #endif
