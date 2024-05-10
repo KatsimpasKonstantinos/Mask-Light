@@ -2,13 +2,15 @@
 
 DataStorage::DataStorage() {}
 
-void DataStorage::saveData(const std::vector<uint8_t> &data)
+void DataStorage::saveData(uint8_t *newData, size_t size)
 {
-    // Store the incoming binary data
-    this->data = data;
+    delete[] data;
+    data = new uint8_t[size];
+    memcpy(data, newData, size);
     dataAvailable = true;
-    // log all the data
-    Serial.println("DataStorage::saveData");
+
+    Serial.println("Free Heap Size: " + String(ESP.getFreeHeap()));
+    Serial.println("Data Size: " + String(size));
 }
 
 bool DataStorage::hasData()
@@ -18,11 +20,11 @@ bool DataStorage::hasData()
 
 void DataStorage::clearData()
 {
-    data.clear();
     dataAvailable = false;
 }
 
-std::vector<uint8_t> DataStorage::getData()
+uint8_t* DataStorage::getData()
 {
+    dataAvailable = false;
     return data;
 }

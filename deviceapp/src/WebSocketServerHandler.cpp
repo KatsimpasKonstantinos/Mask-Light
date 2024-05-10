@@ -11,6 +11,7 @@ WebSocketServerHandler::WebSocketServerHandler(uint16_t port, DataStorage &dataS
 
 void WebSocketServerHandler::begin()
 {
+    delay(100);
     WiFi.begin(_ssid, _password);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -70,10 +71,14 @@ void WebSocketServerHandler::handleEvent(uint8_t client_num, WStype_t type, uint
     break;
     case WStype_BIN:
     {
-        // Encapsulate the variable initialization in a block
-        std::vector<uint8_t> binData(payload, payload + length);
-        _dataStorage.saveData(binData);
-        Serial.printf("[%u] Binary data received and stored.\n", client_num);
+        Serial.printf("[%u] Binary data received and stored. Size: [%u]\n", client_num, length);
+        //print first 3 bytes of the data
+        for (int i = 0; i < 3; i++)
+        {
+            Serial.printf("%u", payload[i]);
+        }
+        _dataStorage.saveData(payload, length);
+        
     }
     break;
     default:

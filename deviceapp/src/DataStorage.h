@@ -8,14 +8,16 @@ class DataStorage
 {
 public:
     DataStorage();
-    void saveData(const std::vector<uint8_t> &data);
+    void saveData(uint8_t *newData, size_t size);
     bool hasData();
     void clearData();
-    std::vector<uint8_t> getData();
+    uint8_t* getData();
 
 private:
-    std::vector<uint8_t> data;
+    static const size_t frameSize = 16 * 8 * 3;
+    uint8_t* data;
     bool dataAvailable = false;
+    size_t allDataSize = 0;
 };
 
 #endif

@@ -5,12 +5,11 @@
 
 //---------------------------------------------------------------------------------Constants
 
-const int LED_PIN = 14;   // GPIO5
-const int SOUND_PIN = 13; // GPIO7
-const int matrixX = 16;
-const int matrixY = 8;
-const int amountLED = matrixX * matrixY;
-const int animationDelay = 10;
+const uint8_t LED_PIN = 14;   // GPIO5
+const uint8_t SOUND_PIN = 13; // GPIO7
+const uint8_t matrixX = 16;
+const uint8_t matrixY = 8;
+const uint16_t amountLED = matrixX * matrixY;
 const char *ssid = "Pixel5";
 const char *password = "123456789";
 const bool debugMode = false;
@@ -47,19 +46,21 @@ void loop()
 
 void drawFrame()
 {
-  for (int y = 0; y < matrixY; y++)
+  if (dataStorage.hasData())
   {
-    for (int x = 0; x < matrixX; x++)
+    uint8_t *data = dataStorage.getData();
+    for (uint8_t y = 0; y < matrixY; y++)
     {
-      if (dataStorage.hasData())
+      uint16_t column = (uint16_t)y * matrixX;
+      for (uint8_t x = 0; x < matrixX; x++)
       {
-        int index = y * matrixX + x;
-        int r = dataStorage.getData()[index * 3];
-        int g = dataStorage.getData()[index * 3 + 1];
-        int b = dataStorage.getData()[index * 3 + 2];
+        uint16_t index = (column + (uint16_t)x) * 3;
+        uint8_t r = data[index];
+        uint8_t g = data[index + 1];
+        uint8_t b = data[index + 2];
         ledController.setColor(r, g, b, x, y);
       }
     }
+    ledController.show();
   }
-  ledController.show();
 }

@@ -1,7 +1,7 @@
 #include "LedController.h"
 #include <Arduino.h>
 
-LedController::LedController(int pin, int numLedsX, int numLedsY)
+LedController::LedController(uint8_t pin, uint8_t numLedsX, uint8_t numLedsY)
     : strip(numLedsX * numLedsY, pin, NEO_GRB + NEO_KHZ800), width(numLedsX), height(numLedsY)
 {
 }
@@ -26,12 +26,12 @@ void LedController::noConnection()
 void LedController::yesHotSpotNoWSConnection(String ip)
 {
     clear();
-    for (int x = 0; x < ip.length() && x < width; x++)
+    for (uint8_t x = 0; x < ip.length() && x < width; x++)
     {
         if (ip[x] != '.')
         {
-            int value = ip[x] - '0';
-            int y = value % height;
+            uint8_t value = ip[x] - '0';
+            uint8_t y = value % height;
             bool isRolledOver = value >= height;
             if (isRolledOver)
             {
@@ -41,7 +41,7 @@ void LedController::yesHotSpotNoWSConnection(String ip)
                 }
                 else
                 {
-                    for (int j = 0; j < y; j++)
+                    for (uint8_t j = 0; j < y; j++)
                     {
                         setColor(255, 0, 0, x, j);
                     }
@@ -55,7 +55,7 @@ void LedController::yesHotSpotNoWSConnection(String ip)
                 }
                 else
                 {
-                    for (int j = 0; j < y; j++)
+                    for (uint8_t j = 0; j < y; j++)
                     {
                         setColor(255, 255, 255, x, j);
                     }
@@ -70,7 +70,7 @@ void LedController::allConnection()
 {
     clear();
     // draw a green border
-    for (int x = 0; x < width; x++)
+    for (uint8_t x = 0; x < width; x++)
     {
         setColor(0, 255, 0, x, 0);
         setColor(0, 255, 0, x, height - 1);
@@ -78,45 +78,45 @@ void LedController::allConnection()
     strip.show();
 }
 
-void LedController::setColor(int r, int g, int b)
+void LedController::setColor(uint8_t r, uint8_t g, uint8_t b)
 {
-    for (int i = 0; i < strip.numPixels(); i++)
+    for (uint16_t i = 0; i < strip.numPixels(); i++)
     {
-        int correctedIndex = assConverter(i);
+        uint16_t correctedIndex = assConverter(i);
         strip.setPixelColor(correctedIndex, strip.Color(r, g, b));
     }
 }
 
-void LedController::setColor(int r, int g, int b, int ledX, int ledY)
+void LedController::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t ledX, uint8_t ledY)
 {
     if (ledX >= 0 && ledX < width && ledY >= 0 && ledY < height)
     {
-        int led = ledY * width + ledX;
-        int correctedLed = assConverter(led);
+        uint16_t led = (uint16_t)ledY * (uint16_t)width + (uint16_t)ledX;
+        uint16_t correctedLed = assConverter(led);
         strip.setPixelColor(correctedLed, strip.Color(r, g, b));
     }
 }
 
-void LedController::setBrightness(int brightness)
+void LedController::setBrightness(uint8_t brightness)
 {
     strip.setBrightness(brightness);
 }
 
 void LedController::clear()
 {
-    for (int i = 0; i < strip.numPixels(); i++)
+    for (uint16_t i = 0; i < strip.numPixels(); i++)
     {
-        int correctedIndex = assConverter(i);
+        uint16_t correctedIndex = assConverter(i);
         strip.setPixelColor(correctedIndex, strip.Color(0, 0, 0));
     }
 }
 
-void LedController::clear(int ledX, int ledY)
+void LedController::clear(uint8_t ledX, uint8_t ledY)
 {
     if (ledX >= 0 && ledX < width && ledY >= 0 && ledY < height)
     {
-        int led = ledY * width + ledX;
-        int correctedLed = assConverter(led);
+        uint16_t led = ledY * width + ledX;
+        uint16_t correctedLed = assConverter(led);
         strip.setPixelColor(correctedLed, strip.Color(0, 0, 0));
     }
 }
@@ -126,9 +126,9 @@ void LedController::show()
     strip.show();
 }
 
-int LedController::assConverter(int wrongPos) // needed to remapp the LED positions, We are using Two 8x8 LED matrix
+uint16_t LedController::assConverter(uint16_t wrongPos) // needed to remapp the LED positions, We are using Two 8x8 LED matrix
 {
-    int rightPos = 0;
+    uint16_t rightPos = 0;
 
     if (wrongPos < 8)
         rightPos = 63 - wrongPos;
