@@ -2,16 +2,19 @@
 
 ### 1.0
 - [ ] Web App
-  - [ ] last speed currently not in binary data => solution how to handle
+  - [ ] Refactor to KFF V0#
+  - [ ] Only accept .kff (bye bye bitbender)
+  - [ ] Buggy behavior 
 - [ ] Mobile App
-  - [ ] make it work with different X,Y other then 16,8 (TextFragment)
-  - [ ] Text & Background Color (2dots)
-  - [ ] Add smoothness adjuster (send double frames) of find alternative for smoothing
-  - [ ] Speed adjustment not in 2KFF
-  - [ ] Live should have Speed and Brightness sliders
-  - [ ] Gray out Send when not connected
-  - [ ] Sliders bigger thumb
-  - [ ] Send data over ble to reduce interference
+  - [ ] Send data over BLE instead of Websocket to reduce interference
+  - [ ] Speed, brightness, smoothness adjustments in live view
+  - [ ] Add "connected" state in Home view and adjust button pressability based on state
+  - [ ] Make it work with different X,Y other then 16,8 in TextFragment
+  - [ ] Thumb sliders should be bigger
+  - [ ] Update Text Strings 
+  - [ ] Add 2KFF Menu instead of only having Text2KFF
 - [ ] ESP
-  - [ ] Websocket Logic
-- [ ] Data Discrepencie, App doesnt fill rest of screen with 0, Web App does
+  - [ ] Refactor to KFF V0
+  - [ ] Get data over BLE
+  - [ ] Implement different operating modes
+- [ ] Data Discrepencie, App doesnt fill rest of screen with 0, Web App does (Is this still the case?)
