@@ -1,7 +1,7 @@
 # Mask-Light
 
 This Project allows a user to control an LED matrix.
-The ecosystem currently has an webapp, mobileapp and the microcontroller code.
+The ecosystem currently has a webapp, mobileapp and the microcontroller code.
 
 
 ## Components
@@ -13,6 +13,7 @@ The ecosystem currently has an webapp, mobileapp and the microcontroller code.
   - Matrix: 8x16 RGB individually adressable
 - **Web Application:**
   - Programming Language: JavaScript
+  - Hosted on https://masklight.konstantinos.katsimpas.com/
 
 
 ## Table of Contents
@@ -25,11 +26,11 @@ The ecosystem currently has an webapp, mobileapp and the microcontroller code.
 
 
 ## KFF Format
-The KFF format is a custom data format used for communication between the app, the LED matrix, and the web application. It consists of an array containing matrix dimensions, frame count, speed, and color data for each pixel.
+The KFF format is a custom binary data format used for communication between the app, the LED matrix, and the web application.
 
  
 ## Matrix Controller App
-The Matrix Controller App is designed to allow users to control an LED matrix by sending data via Bluetooth to an ESP32 microcontroller. The app supports displaying text, animations, and other data formats.
+The Matrix Controller App is designed to allow users to control an LED matrix by sending data via Bluetooth to an ESP microcontroller. The app supports displaying text, animations, and other data formats.
 
 ### UI Components
 - **Home:** Establishes a Bluetooth connection to the LED matrix.
