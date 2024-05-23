@@ -21,12 +21,20 @@ The ecosystem currently has a webapp, mobileapp and the microcontroller code.
   - [Components](#components)
   - [Table of Contents](#table-of-contents)
   - [KFF Format](#kff-format)
+    - [V0](#v0)
   - [Matrix Controller App](#matrix-controller-app)
     - [UI Components](#ui-components)
 
 
 ## KFF Format
-The KFF format is a custom binary data format used for communication between the app, the LED matrix, and the web application.
+The KFF (Konstis File Format) is a custom binary data format used for communication between the app, the LED matrix, and the web application.
+
+### V0
+Version 1Byte
+Width 1Byte
+Height 1Byte
+Speed 1Byte
+Data ByteArray (size is Width * Height * 3, cluster of 3 Bytes for each Pixel (rgb), compareable to a stream)
 
  
 ## Matrix Controller App
