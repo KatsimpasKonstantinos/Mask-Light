@@ -13,7 +13,7 @@ The ecosystem currently has a webapp, mobileapp and the microcontroller code.
   - Matrix: 8x16 RGB individually adressable
 - **Web Application:**
   - Programming Language: JavaScript
-  - Hosted on https://masklight.konstantinos.katsimpas.com/
+  - Hosted on [masklight.konstantinos.katsimpas.com](https://masklight.konstantinos.katsimpas.com/)
 
 
 ## Table of Contents
@@ -24,6 +24,11 @@ The ecosystem currently has a webapp, mobileapp and the microcontroller code.
     - [V0](#v0)
   - [Matrix Controller App](#matrix-controller-app)
     - [UI Components](#ui-components)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
 
 
 ## KFF Format
@@ -46,3 +51,17 @@ The Matrix Controller App is designed to allow users to control an LED matrix by
 - **Live:** Previews and sends saved KFF files to the LED matrix.
 - **Info:** Displays additional information about the application.
 
+## Installation
+TODO
+
+## Usage
+TODO
+
+## Contributing
+If you'd like to contribute to this project, please follow the [contributing guidelines](CONTRIBUTING.md).
+
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+## Contact
+For any questions or feedback, please reach out to [konstantinoskatsimpas02@gmail.com](mailto:konstantinoskatsimpas02@gmail.com).
