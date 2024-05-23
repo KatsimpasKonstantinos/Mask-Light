@@ -6,34 +6,44 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
+
+
 class KFFFileHelper(
     private val context: Context?,
     private val fileName: String,
 ) {
-    // Ensure the file name ends with ".bin"
+    private val suffix = ".kff"
+    private val supportedVersion = 0
     private val file: File by lazy {
-        File(context?.filesDir, "${fileName.takeIf { !it.endsWith(".bin") } ?: fileName.dropLast(4)}.bin")
+        File(context?.filesDir, "$fileName$suffix")
     }
 
-    fun save(data: ByteArray) {
+    fun save(kff: KFFFile) {
         FileOutputStream(file).use { output ->
-            output.write(data)
+            output.write(kff.serialize())
         }
         Log.d("Saved", "Saved file to: ${file.absolutePath}")
     }
 
-    fun load(): ByteArray? {
+    fun load(): KFFFile? {
         if (!file.exists()) {
+            Log.d("Load", "File does not exist")
             return null
         }
-        return FileInputStream(file).use { input ->
+        val byteArray = FileInputStream(file).use { input ->
             input.readBytes()
         }
+        val kff = KFFFile.deserialize(byteArray)
+        if (kff.version != supportedVersion.toUByte()) {
+            Log.d("Load", "Invalid version")
+            return null
+        }
+        return kff
     }
 
     fun findFiles(): List<File> {
         return context?.filesDir?.listFiles { _, name ->
-            name.endsWith(".bin")
+            name.endsWith(suffix)
         }?.toList() ?: emptyList()
     }
 

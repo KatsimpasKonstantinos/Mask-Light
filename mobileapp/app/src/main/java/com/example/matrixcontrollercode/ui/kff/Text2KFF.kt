@@ -1,5 +1,6 @@
 package com.example.matrixcontrollercode.ui.kff
 
+import android.graphics.Color
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
@@ -539,17 +540,16 @@ class Text2KFF {
 
     //TODO only works for matrixX = 8 make it use 0 for matrixX > 8
     @OptIn(ExperimentalUnsignedTypes::class)
-    fun convertToBinary(text: String, autoEntry: Boolean, autoExit: Boolean, autoSpace: Boolean, matrixX: Int, matrixY: Int, speed: Int, red: Int, green: Int, blue: Int): ByteArray? {
+    fun convertToByteArray(text: String, autoEntry: Boolean, autoExit: Boolean, autoSpace: Boolean, matrixX: Int, matrixY: Int, color: Int, bgColor: Int): ByteArray? {
         if (text.isEmpty()) return null
         Log.d("Text2KFF",
-            "$text $autoEntry $autoSpace $autoExit $matrixX $matrixY $speed $red $green $blue"
+            "$text $autoEntry $autoSpace $autoExit $matrixX $matrixY $color $bgColor"
         )
-        val byteArrayCache = createByteArrayCache(text, autoEntry, autoSpace, autoExit, matrixX)
+        var byteArrayCache = createByteArrayCache(text, autoEntry, autoSpace, autoExit, matrixX)
         if (byteArrayCache.isEmpty()) return null
         val frames = calculateFrames(byteArrayCache.size, matrixX)
-        val binaryData = constructBinaryData(byteArrayCache, matrixY, matrixX, red, green, blue, speed, frames)
-        val footer = byteArrayOf(matrixX.toByte(), matrixY.toByte(), speed.toByte())
-        return binaryData + footer
+        val binaryData = constructBinaryData(byteArrayCache, matrixY, matrixX, color, bgColor, frames)
+        return binaryData
     }
 
     private fun createByteArrayCache(text: String, autoEntry: Boolean, autoSpace: Boolean, autoExit: Boolean, matrixX: Int): UByteArray {
@@ -565,7 +565,7 @@ class Text2KFF {
         return byteArrayCache
     }
 
-    private fun constructBinaryData(byteArrayCache: UByteArray, matrixY: Int, matrixX: Int, red: Int, green: Int, blue: Int, speed: Int, frames: Int): ByteArray {
+    private fun constructBinaryData(byteArrayCache: UByteArray, matrixY: Int, matrixX: Int, color: Int, bgColor: Int, frames: Int): ByteArray {
         val pixelData = mutableListOf<Byte>()
         for (f in 0 until frames) {
             for (y in 0 until matrixY) {
@@ -577,9 +577,15 @@ class Text2KFF {
                     } else {
                         0
                     }
-                    pixelData.add((red * pixel).toByte())
-                    pixelData.add((green * pixel).toByte())
-                    pixelData.add((blue * pixel).toByte())
+                    if (pixel == 0) {
+                        pixelData.add(Color.red(bgColor).toByte())
+                        pixelData.add(Color.green(bgColor).toByte())
+                        pixelData.add(Color.blue(bgColor).toByte())
+                    } else {
+                        pixelData.add(Color.red(color).toByte())
+                        pixelData.add(Color.green(color).toByte())
+                        pixelData.add(Color.blue(color).toByte())
+                    }
                 }
             }
         }

@@ -24,17 +24,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/textViewColorBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="-48dp"
+        android:text="●"
+        android:textColor="#000000"
+        android:textSize="150sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMatrixX" />
+
+    <TextView
+        android:id="@+id/textViewBackgroundColorBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="-48dp"
         android:text="●"
         android:textColor="#000000"
         android:textSize="150sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/switchColor"
         app:layout_constraintTop_toBottomOf="@+id/textViewMatrixX" />
+
+    <Switch
+        android:id="@+id/switchColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:elevation="-1dp"
+        android:scaleX="3"
+        android:scaleY="3"
+        android:switchMinWidth="88dp"
+        android:text=""
+        android:thumbTint="@android:color/background_dark"
+        android:trackTint="@android:color/transparent"
+        app:layout_constraintStart_toEndOf="@+id/textViewColorBox"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMatrixX" />
+
+
 
     <SeekBar
         android:id="@+id/seekBarRed"
@@ -57,6 +86,7 @@
         android:layout_marginEnd="32dp"
         android:min="1"
         android:max="30"
+        android:progress="10"
         android:progressTint="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -88,6 +118,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/seekBarGreen" />
+
+    <SeekBar
+        android:id="@+id/seekBarBrightness"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:max="255"
+        android:progress="128"
+        android:progressTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarBlue" />
 
     <CheckBox
         android:id="@+id/checkBoxAutoEntry"
@@ -157,7 +201,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:hint="Matrix X"
+        android:hint="Width"
         android:inputType="number"
         app:layout_constraintEnd_toStartOf="@+id/textViewMatrixY"
         app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +214,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:hint="Matrix Y"
+        android:hint="Height"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewMatrixX"
@@ -181,10 +225,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="1 fps"
+        android:text="10 fps"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarBlue" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarBrightness" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,11 @@
 package com.example.matrixcontrollercode.ui.live
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Color.rgb
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,81 +13,100 @@ import android.view.ViewGroup
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.matrixcontrollercode.data.KFFFile
 import com.example.matrixcontrollercode.data.KFFFileHelper
 import com.example.matrixcontrollercode.data.WebSocketClientManager
 import com.example.matrixcontrollercode.databinding.FragmentLiveBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
-import java.net.URL
 import java.util.*
 
 class LiveFragment : Fragment() {
 
     private var _binding: FragmentLiveBinding? = null
     private val binding get() = _binding!!
-    private var matrixData: ByteArray = byteArrayOf()
-    private var matrixX: Int = 0
-    private var matrixY: Int = 0
-    private var speed: Int = 1
+    private var byteArray: ByteArray = byteArrayOf()
+    private var matrixX: Int = 16
+    private var matrixY: Int = 8
+    private var speed: Int = 10
     private var currentFrame = 0
+    private var supportedVersion = 0
+    private var frameHandler: Handler? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLiveBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val tablePadding = 9
+        val tablePadding = 1
         val textSize = 26F
+        val tableTextSize = 18F
         val textSizeSmall = 16F
         var activeFile = ""
-        var frameTimer = Timer()
         var isPlaying = false
         var isLoaded = false
 
+
+
         val playButton = binding.buttonPlay
-        playButton.isClickable = false
-        playButton.alpha = 0.5f
+        fun canBePlayed(boolean: Boolean) {
+            playButton.isClickable = boolean
+            playButton.alpha = if (boolean) 1f else 0.5f
+        }
+        canBePlayed(false)
 
         val sendButton = binding.buttonSend
-        sendButton.isClickable = false
-        sendButton.alpha = 0.5f
+        fun canBeSend(boolean: Boolean) {
+            sendButton.isClickable = boolean
+            sendButton.alpha = if (boolean) 1f else 0.5f
+        }
+        canBeSend(false)
+
+        val tableLayout = binding.tableLayout
 
         fun fillTable() {
-            binding.tableLayout.removeAllViewsInLayout()
             val frameSize = matrixX * matrixY * 3
             val frameStartIndex = currentFrame * frameSize
-            if (frameStartIndex + frameSize <= matrixData.size) {
-                for (y in 0 until matrixY) {
-                    val row = TableRow(binding.tableLayout.context)
-                    for (x in 0 until matrixX) {
-                        val textView = TextView(binding.tableLayout.context)
-                        textView.text = "█"
-                        textView.textSize = textSize
-                        val pixelIndex = frameStartIndex + (y * matrixX + x) * 3
-                        if (pixelIndex + 2 < matrixData.size) {
-                            val r = matrixData[pixelIndex].toInt() and 0xFF
-                            val g = matrixData[pixelIndex + 1].toInt() and 0xFF
-                            val b = matrixData[pixelIndex + 2].toInt() and 0xFF
-                            textView.setTextColor(Color.rgb(r, g, b))
-                        }
+
+            if (frameStartIndex + frameSize > byteArray.size) return
+
+            for (y in 0 until matrixY) {
+                val row: TableRow
+                if (y < tableLayout.childCount) {
+                    row = tableLayout.getChildAt(y) as TableRow
+                } else {
+                    row = TableRow(tableLayout.context)
+                    tableLayout.addView(row)
+                }
+                for (x in 0 until matrixX) {
+                    val textView: TextView
+                    if (x < row.childCount) {
+                        textView = row.getChildAt(x) as TextView
+                    } else {
+                        textView = TextView(tableLayout.context)
+                        textView.text = "██"
+                        textView.textSize = tableTextSize
                         textView.setPadding(tablePadding, tablePadding, tablePadding, tablePadding)
                         row.addView(textView)
                     }
-                    binding.tableLayout.addView(row)
+                    val pixelIndex = frameStartIndex + (y * matrixX + x) * 3
+                    if (pixelIndex + 2 < byteArray.size) {
+                        val r = byteArray[pixelIndex].toInt() and 0xFF
+                        val g = byteArray[pixelIndex + 1].toInt() and 0xFF
+                        val b = byteArray[pixelIndex + 2].toInt() and 0xFF
+                        textView.setTextColor(Color.rgb(r, g, b))
+                    }
                 }
+                while (row.childCount > matrixX) {
+                    row.removeViewAt(row.childCount - 1)
+                }
+            }
+            while (tableLayout.childCount > matrixY) {
+                tableLayout.removeViewAt(tableLayout.childCount - 1)
             }
         }
 
-
         fun tableNextFrame() {
             activity?.runOnUiThread {
-                if (currentFrame + 1 < matrixData.size / (matrixX * matrixY * 3)) {
+                if (currentFrame + 1 < byteArray.size / (matrixX * matrixY * 3)) {
                     currentFrame++
                 } else {
                     currentFrame = 0
@@ -94,45 +115,65 @@ class LiveFragment : Fragment() {
             }
         }
 
-        fun togglePlaying() {
-            isPlaying = !isPlaying
+        fun togglePlaying(boolean: Boolean) {
+            isPlaying = boolean
             if (isPlaying && isLoaded) {
                 playButton.text = "PAUSE"
-                frameTimer = Timer()
-                frameTimer.scheduleAtFixedRate(object : TimerTask() {
+                frameHandler = Handler(Looper.getMainLooper())
+                val frameUpdateRunnable = object : Runnable {
                     override fun run() {
                         tableNextFrame()
+                        frameHandler?.postDelayed(this, (1000 / speed).toLong())
                     }
-                }, 0, (1000 / speed).toLong())
+                }
+                frameHandler?.post(frameUpdateRunnable)
                 Log.d("Replay Speed", "${(1000 / speed).toLong()}ms")
             } else {
+                frameHandler?.removeCallbacksAndMessages(null)
                 playButton.text = "PLAY"
-                frameTimer.cancel()
             }
         }
-        binding.buttonPlay.setOnClickListener { togglePlaying() }
+        binding.buttonPlay.setOnClickListener { togglePlaying(!isPlaying) }
+
+        fun displayError(message: String) {
+            Log.d("InterpretError", "Corrupted file or not supported version")
+            //clear all table and print error message
+            tableLayout.removeAllViewsInLayout()
+            val row = TableRow(tableLayout.context)
+            val textView = TextView(tableLayout.context)
+            textView.text = message
+            textView.textSize = textSizeSmall
+            textView.setPadding(tablePadding, tablePadding, tablePadding, tablePadding)
+            row.addView(textView)
+            tableLayout.addView(row)
+        }
 
         binding.buttonLoad.setOnClickListener {
-            val kffFileHelper = KFFFileHelper(context, activeFile)
-            val data = kffFileHelper.load()
             try {
-                data?.let {
-                    if (it.size >= 3) {
-                        matrixX = it[it.size - 3].toInt() and 0xFF
-                        matrixY = it[it.size - 2].toInt() and 0xFF
-                        speed = it[it.size - 1].toInt() and 0xFF
-                        matrixData = it.copyOfRange(0, it.size - 3)
+                togglePlaying(false)
+                isLoaded = false
+                val kffFileHelper = KFFFileHelper(context, activeFile)
+                val kff = kffFileHelper.load()
+                if (kff == null) {
+                    displayError("Corrupted file or not supported version")
+                    return@setOnClickListener
+                }
+                kff.let {
+                    if (it.data.isNotEmpty()) {
+                        matrixX = it.width.toInt()
+                        matrixY = it.height.toInt()
+                        speed = it.speed.toInt()
+                        byteArray = it.data
                         isLoaded = true
-                        playButton.isClickable = true
-                        playButton.alpha = 1f
-                        sendButton.isClickable = true
-                        sendButton.alpha = 1f
+                        canBePlayed(true)
+                        canBeSend(true)
                         currentFrame = 0
+                        tableLayout.removeAllViewsInLayout()
                         fillTable()
                     }
                 }
             } catch (exception: Exception) {
-                Log.d("InterpretError", "Probably not a kff")
+                displayError("There was an error while loading the file")
             }
         }
 
@@ -144,45 +185,57 @@ class LiveFragment : Fragment() {
             val kffFileHelper = KFFFileHelper(context, "")
             val files = kffFileHelper.findFiles()
             for (file in files.indices) {
-                val row = TableRow(tableSave.context)
+                try {
+                    val row = TableRow(tableSave.context)
 
-                val textView = TextView(tableSave.context)
-                textView.text = files[file].toString().split("/").last().removeSuffix(".bin")
-                textView.textSize = textSize
-                textView.setTextColor(rgb(255,255,255))
-                textView.setPadding(tablePadding, tablePadding, tablePadding, tablePadding)
-                row.addView(textView)
-
-                activeRow = row
-
-                row.setOnClickListener{
-                    activeRow.setBackgroundColor(rgb(30,30,30))
+                    val textView = TextView(tableSave.context)
+                    textView.text = files[file].toString().split("/").last().removeSuffix(".kff")
+                    textView.textSize = textSize
+                    textView.setPadding(tablePadding, tablePadding, tablePadding, tablePadding)
+                    row.addView(textView)
                     activeRow = row
-                    activeRow.setBackgroundColor(rgb(100,100,100))
-                    val textView = row.getChildAt(0) as TextView
-                    activeFile = textView.text.toString()
-                    Log.d("row", activeFile)
+
+                    if (KFFFile.deserialize(files[file].readBytes()).version.toInt() != supportedVersion) {
+                        textView.setTextColor(rgb(255,0,0))
+                    } else {
+                        textView.setTextColor(rgb(255,255,255))
+                    }
+
+                    row.setBackgroundColor(rgb(30,30,30))
+
+                    row.setOnClickListener{
+                        activeRow.setBackgroundColor(rgb(30,30,30))
+                        activeRow = row
+                        activeRow.setBackgroundColor(rgb(100,100,100))
+                        val textView = row.getChildAt(0) as TextView
+                        activeFile = textView.text.toString()
+                        Log.d("row", activeFile)
+                    }
+
+                    tableSave.addView(row)
+                } catch (e: Exception) {
+                    Log.d("Error", "Error while reading file")
                 }
-                row.setBackgroundColor(rgb(30,30,30))
-                tableSave.addView(row)
             }
         }
 
         updateSavedFiles()
 
+
+
         binding.buttonDelete.setOnClickListener {
             KFFFileHelper(context, activeFile).delete()
             activeFile = ""
-            matrixData = byteArrayOf()
+            byteArray = byteArrayOf()
             isLoaded = false
-            togglePlaying()
+            togglePlaying(false)
             updateSavedFiles()
             fillTable()
-            playButton.isClickable = false
-            playButton.alpha = 0.5f
-            sendButton.isClickable = false
-            sendButton.alpha = 0.5f
+            canBePlayed(false)
+            canBeSend(false)
         }
+
+
 
         fun appendFooter(matrixData: ByteArray, matrixX: Int, matrixY: Int, speed: Int): ByteArray {
             val footer = byteArrayOf(matrixX.toByte(), matrixY.toByte(), speed.toByte())
@@ -190,7 +243,7 @@ class LiveFragment : Fragment() {
         }
 
         binding.buttonSend.setOnClickListener {
-            val finalData = appendFooter(matrixData, matrixX, matrixY, speed)
+            val finalData = appendFooter(byteArray, matrixX, matrixY, speed)
             WebSocketClientManager.send(finalData)
         }
 

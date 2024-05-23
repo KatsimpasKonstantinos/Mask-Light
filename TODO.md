@@ -10,6 +10,8 @@
   - [ ] Speed adjustment not in 2KFF
   - [ ] Live should have Speed and Brightness sliders
   - [ ] Gray out Send when not connected
+  - [ ] Sliders bigger thumb
+  - [ ] Send data over ble to reduce interference
 - [ ] ESP
   - [ ] Websocket Logic
 - [ ] Data Discrepencie, App doesnt fill rest of screen with 0, Web App does

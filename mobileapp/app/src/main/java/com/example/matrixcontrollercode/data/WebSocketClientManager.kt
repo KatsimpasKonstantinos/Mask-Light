@@ -1,5 +1,6 @@
 package com.example.matrixcontrollercode.data
 
+import android.util.Log
 import kotlinx.coroutines.*
 import okhttp3.*
 import okio.ByteString
@@ -34,7 +35,7 @@ object WebSocketClientManager {
     }
     private var sendJob: Job? = null
 
-    private var smoothInt = 2;
+    private var smoothInt = 1;
 
     fun send(binaryData: ByteArray) {
         sendJob?.cancel()
