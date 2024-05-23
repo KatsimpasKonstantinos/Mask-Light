@@ -26,6 +26,7 @@ The ecosystem currently has a webapp, mobileapp and the microcontroller code.
     - [UI Components](#ui-components)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Roadmap](#roadmap)
   - [Contributing](#contributing)
   - [License](#license)
   - [Contact](#contact)
@@ -56,6 +57,9 @@ TODO
 
 ## Usage
 TODO
+
+## Roadmap
+A Roadmap of features that will be added can be found in the [TODO List](TODO.md)
 
 ## Contributing
 If you'd like to contribute to this project, please follow the [contributing guidelines](CONTRIBUTING.md).
