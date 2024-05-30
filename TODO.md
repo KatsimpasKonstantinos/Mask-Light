@@ -2,7 +2,7 @@
 
 ### 1.0
 - [ ] Web App
-  - [ ] Refactor to KFF V0#
+  - [ ] Refactor to KFF V0
   - [ ] Only accept .kff (bye bye bitbender)
   - [ ] Buggy behavior 
 - [ ] Mobile App
