@@ -42,7 +42,7 @@ Height 1Byte
 Speed 1Byte
 Data ByteArray (size is Width * Height * 3, cluster of 3 Bytes for each Pixel (rgb), compareable to a stream)
 
-![image](https://github.com/KatsimpasKonstantinos/Mask-Light/assets/134274002/eb4b720f-0cd6-4696-8524-1789f2301b27)
+![image](https://github.com/KatsimpasKonstantinos/Mask-Light/assets/134274002/f5200bf0-b03a-4b06-a189-e789bbbcd26e)
 https://excalidraw.com/#json=NlSfO8j-Cext2qld8iBYQ,q-OGPAmQ4XPZjE9-orb1ww
 
  
