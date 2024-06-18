@@ -42,6 +42,9 @@ Height 1Byte
 Speed 1Byte
 Data ByteArray (size is Width * Height * 3, cluster of 3 Bytes for each Pixel (rgb), compareable to a stream)
 
+![image](https://github.com/KatsimpasKonstantinos/Mask-Light/assets/134274002/eb4b720f-0cd6-4696-8524-1789f2301b27)
+https://excalidraw.com/#json=NlSfO8j-Cext2qld8iBYQ,q-OGPAmQ4XPZjE9-orb1ww
+
  
 ## Matrix Controller App
 The Matrix Controller App is designed to allow users to control an LED matrix by sending data via Bluetooth to an ESP microcontroller. The app supports displaying text, animations, and other data formats.
